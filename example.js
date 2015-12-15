@@ -1,10 +1,3 @@
-# 
-
-## Data transformation toolkit
-
-Example usage:
-
-```es6
 var rohr = require('./lib/rohr');
 
 var input = {
@@ -52,38 +45,3 @@ rohr(input)
 }).catch(function(err) {
     console.log('ERR: ' + JSON.stringify(err, null, 4));
 });
-
-```
-
-Result:
-```json
-IN: {
-    "foo": "4",
-    "bar": {
-        "yolo": 420,
-        "trolo": {
-            "bolo": 4
-        }
-    },
-    "testId": 1
-}
-OUT: {
-    "foo": 8,
-    "bar": {
-        "yolo": "xxxNoScope420xxx",
-        "trolo": {
-            "bolo": 4
-        }
-    },
-    "more": {
-        "nested": {
-            "stuff": {
-                "testId": {
-                    "id": 1,
-                    "DATA": "more stuff"
-                }
-            }
-        }
-    }
-}
-```

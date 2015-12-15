@@ -1,3 +1,6 @@
+[![](https://travis-ci.org/AlexanderDzhoganov/rohr.js.svg?branch=master)](https://travis-ci.org/AlexanderDzhoganov/rohr.js)
+[![codecov.io](https://codecov.io/github/AlexanderDzhoganov/rohr.js/coverage.svg?branch=master)](https://codecov.io/github/AlexanderDzhoganov/rohr.js?branch=master)
+
 # Rohr.js
 ## Data validation & transformation library
 

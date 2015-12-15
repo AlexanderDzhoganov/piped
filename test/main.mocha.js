@@ -46,6 +46,34 @@ describe('rohr', function() {
         });
     });
 
+    describe('set', function() {
+        it('should set a property (sync value)', function() {
+            return rohr({}).set('foo', 'bar').toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
+
+        it('should set a property (sync function)', function() {
+            return rohr({}).set('foo', function() {
+                return 'bar';
+            }).toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
+
+        it('should set a property (async function)', function() {
+            return rohr({}).set('foo', function() {
+                return new Promise(function(resolve, reject) { 
+                    setTimeout(function() {
+                        resolve('bar');
+                    }, 20);
+                });
+            }).toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
+    });
+
     describe('rename', function() {
         it('test 1', function() {
             return rohr({foo: 'bar'})

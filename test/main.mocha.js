@@ -198,6 +198,34 @@ describe('rohr', function() {
         });
     });
 
+    describe('value()', function() {
+        it('should set a property (sync value)', function() {
+            return rohr({ foo: 1234 }).prop('foo').value('bar').toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
+
+        it('should set a property (sync function)', function() {
+            return rohr({ foo: 1234 }).prop('foo').value(function() {
+                return 'bar';
+            }).toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
+
+        it('should set a property (async function)', function() {
+            return rohr({ foo: 1234 }).prop('foo').value(function() {
+                return new Promise(function(resolve, reject) { 
+                    setTimeout(function() {
+                        resolve('bar');
+                    }, 20);
+                });
+            }).toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
+    });
+
     describe('rename()', function() {
         it('should rename a property #1', function() {
             return rohr({foo: 'bar'})
@@ -455,6 +483,30 @@ describe('rohr', function() {
                 object.test[1].should.equal(4);
                 object.test[2].should.equal(6);
                 object.test[3].should.equal(8);
+            });
+        });
+    });
+
+    describe('broadcast()', function() {
+        it('should broadcast a value to a single field', function() {
+            return rohr({ foo: 1234 })
+
+            .prop('foo').broadcast('bar')
+
+            .toPromise().then(function(object) {
+                object.bar.should.equal(1234);
+            });
+        });
+
+        it('should broadcast a value to multiple fields', function() {
+            return rohr({ foo: 1234 })
+            
+            .prop('foo').broadcast(['bar', 'baz', 'test'])
+
+            .toPromise().then(function(object) {
+                object.bar.should.equal(1234);
+                object.baz.should.equal(1234);
+                object.test.should.equal(1234);
             });
         });
     });

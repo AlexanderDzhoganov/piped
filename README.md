@@ -103,6 +103,7 @@ error()                         |
 prop(propertyName)              |
 optional(propertyName)          |
 set(propertyName, [value/fn])   | 
+value([value/fn])               | 
 nuke()                          |
 scope()                         |
 scopeBack()                     |
@@ -118,3 +119,4 @@ lookup([array/object], key)     |
 map(fn)                         |
 rename(propertyName)            |
 rescope(propertyPath)           |
+broadcast([propertyName/array]) |

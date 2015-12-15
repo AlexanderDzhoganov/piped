@@ -4,7 +4,7 @@
   "description": "Validation and data transformation library",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/AlexanderDzhoganov/rohr.js#readme",
   "devDependencies": {
+    "mocha": "^2.3.4",
     "should": "^8.0.1"
   },
   "dependencies": {

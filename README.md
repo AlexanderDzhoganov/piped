@@ -1,6 +1,6 @@
-# 
+# Rohr.js
 
-## Data transformation toolkit
+## Validation & transformation toolkit
 
 Example usage:
 

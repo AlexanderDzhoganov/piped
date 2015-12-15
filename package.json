@@ -1,6 +1,6 @@
 {
   "name": "rohr",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Validation and data transformation library",
   "main": "index.js",
   "scripts": {

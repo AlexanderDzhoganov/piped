@@ -10,7 +10,29 @@ describe('rohr', function() {
         });
     });
 
-    describe('isString', function() {
+    describe('object()', function() {
+        it('should return the object', function() {
+            return rohr({foo: 'bar'}).object(function(object) {
+                object.foo.should.equal('bar');
+            }).resolve();
+        });
+    })
+
+    describe('object()', function() {
+        it('should return the validation errors', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').isNumber()
+
+            .error(function(errors) {
+                errors.length.should.equal(1);
+            })
+
+            .resolve();
+        });
+    })
+
+    describe('isString()', function() {
         it('test 1 (passing)', function() {
             return rohr({foo: 'bar'})
 
@@ -32,7 +54,7 @@ describe('rohr', function() {
         });
     });
 
-    describe('nuke', function() {
+    describe('nuke()', function() {
         it('should remove a property', function() {
             return rohr({foo: 'bar'})
 
@@ -46,7 +68,7 @@ describe('rohr', function() {
         });
     });
 
-    describe('set', function() {
+    describe('set()', function() {
         it('should set a property (sync value)', function() {
             return rohr({}).set('foo', 'bar').toPromise().then(function(object) {
                 object.foo.should.equal('bar');
@@ -74,7 +96,7 @@ describe('rohr', function() {
         });
     });
 
-    describe('rename', function() {
+    describe('rename()', function() {
         it('should rename a property #1', function() {
             return rohr({foo: 'bar'})
 
@@ -130,9 +152,32 @@ describe('rohr', function() {
                 object.test.hello.should.equal('world');
             });
         })
+
+        it('with scope() (async) #2', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').isString().rename('test').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve({ hello: 'world', nuked: true })
+                    }, 50);
+                });
+            }).scope()
+                .prop('hello').isString()
+                .prop('nuked').nuke()
+
+            .rootScope()
+
+            .toPromise().then(function(object) {
+                object.test.hello.should.equal('world');
+                if(object.test.nuked) {
+                    return Promise.reject();
+                }
+            });
+        })
     })
 
-    describe('transform', function() {
+    describe('transform()', function() {
         it('w/ synchronous return value', function() {
             return rohr({foo: 'bar'})
 

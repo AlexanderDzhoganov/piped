@@ -71,8 +71,20 @@ describe('rohr', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').transform(function(val) {
-                return Promise.resolve('baz');
-            }).toPromise().then(function(object) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('hello');
+                    }, 50);
+                });
+            }).transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('baz');
+                    }, 25);
+                });
+            })
+
+            .toPromise().then(function(object) {
                 object.foo.should.equal('baz');
             });
         });
@@ -81,11 +93,19 @@ describe('rohr', function() {
             return rohr({foo: 'bar', test: 1234})
 
             .prop('foo').isString().transform(function(val) {
-                return Promise.resolve('baz');
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('baz');
+                    }, 25);
+                });
             })
 
             .prop('test').isNumber().transform(function(val) {
-                return Promise.resolve(val * 2);
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(val * 2);
+                    }, 40);
+                });
             })
 
             .toPromise().then(function(object) {

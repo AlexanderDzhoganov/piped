@@ -16,7 +16,7 @@ describe('rohr', function() {
                 object.foo.should.equal('bar');
             }).resolve();
         });
-    })
+    });
 
     describe('object()', function() {
         it('should return the validation errors', function() {
@@ -30,7 +30,43 @@ describe('rohr', function() {
 
             .resolve();
         });
-    })
+    });
+
+    describe('prop()', function() {
+        it('test 1 (passing)', function() {
+            return rohr({foo: 'bar'})
+                .prop('foo');
+        });
+
+        it('test 2 (failing)', function() {
+            return rohr({foo: 'bar'})
+                .prop('notFound')
+            .toPromise().then(function() {
+                return Promise.reject();
+            }, function() {
+                return Promise.resolve();
+            });
+        });
+    });
+
+    describe('optional()', function() {
+        it('test 1 (passing)', function() {
+            return rohr({foo: 'bar'})
+                .optional('foo').transform(function(value) {
+                    return 'test';
+                })
+
+                .toPromise().then(function(object) {
+                    object.foo.should.equal('test');
+                });
+        });
+
+        it('test 2 (failing)', function() {
+            return rohr({foo: 'bar'})
+                .optional('notFound')
+            .toPromise();
+        });
+    });
 
     describe('isString()', function() {
         it('test 1 (passing)', function() {
@@ -45,6 +81,72 @@ describe('rohr', function() {
             return rohr({foo: 1234})
 
             .prop('foo').isString()
+
+            .toPromise().then(function() {
+                return Promise.reject();
+            }).catch(function() {
+                return Promise.resolve();
+            });
+        });
+    });
+
+    describe('isNumber()', function() {
+        it('test 1 (passing)', function() {
+            return rohr({foo: 4})
+
+            .prop('foo').isNumber()
+
+            .toPromise();
+        });
+
+        it('test 2 (failing)', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').isNumber()
+
+            .toPromise().then(function() {
+                return Promise.reject();
+            }).catch(function() {
+                return Promise.resolve();
+            });
+        });
+    });
+
+    describe('isObject()', function() {
+        it('test 1 (passing)', function() {
+            return rohr({foo: {}})
+
+            .prop('foo').isObject()
+
+            .toPromise();
+        });
+
+        it('test 2 (failing)', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').isObject()
+
+            .toPromise().then(function() {
+                return Promise.reject();
+            }).catch(function() {
+                return Promise.resolve();
+            });
+        });
+    });
+
+    describe('isDate()', function() {
+        it('test 1 (passing)', function() {
+            return rohr({foo: new Date(Date.now())})
+
+            .prop('foo').isDate()
+
+            .toPromise();
+        });
+
+        it('test 2 (failing)', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').isDate()
 
             .toPromise().then(function() {
                 return Promise.reject();
@@ -174,8 +276,8 @@ describe('rohr', function() {
                     return Promise.reject();
                 }
             });
-        })
-    })
+        });
+    });
 
     describe('transform()', function() {
         it('w/ synchronous return value', function() {
@@ -235,5 +337,125 @@ describe('rohr', function() {
             });
         });
 
+    });
+
+    describe('scope()', function() {
+        it('single scope', function() {
+            return rohr({foo: { bar: 'baz' }})
+
+            .prop('foo').scope()
+                .prop('bar').isString().transform(function(value) {
+                    value.should.equal('baz');
+                    return value;
+                })
+            .scopeBack()
+
+            .toPromise().then(function(object) {
+                object.foo.bar.should.equal('baz');
+            });
+        });
+
+        it('nested scopes', function() {
+            return rohr({foo: { bar: { baz: 420 } }})
+
+            .prop('foo').isObject().scope()
+                .prop('bar').isObject().scope()
+                    .prop('baz').isNumber().transform(function(value) {
+                        value.should.equal(420);
+                        return new Promise(function(resolve, reject) {
+                            setTimeout(function() {
+                                resolve(value * 2);
+                            }, 25);
+                        });
+                    })
+                .scopeBack()
+            .scopeBack()
+
+            .toPromise().then(function(object) {
+                object.foo.bar.baz.should.equal(840);
+            });
+        });
+    });
+
+    describe('map()', function() {
+        it('sync test', function() {
+            return rohr({ test: [1, 2, 3, 4]})
+            
+            .prop('test').isArray().map(function(value) {
+                return value * 2;
+            })
+
+            .toPromise().then(function(object) {
+                object.test.length.should.equal(4);
+                object.test[0].should.equal(2);
+                object.test[1].should.equal(4);
+                object.test[2].should.equal(6);
+                object.test[3].should.equal(8);
+            });
+        });
+
+        it('async test', function() {
+            return rohr({ test: [1, 2, 3, 4]})
+            
+            .prop('test').isArray().map(function(value) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(value * 2);
+                    }, 20);
+                });
+            })
+
+            .toPromise().then(function(object) {
+                object.test.length.should.equal(4);
+                object.test[0].should.equal(2);
+                object.test[1].should.equal(4);
+                object.test[2].should.equal(6);
+                object.test[3].should.equal(8);
+            });
+        });
+
+        it('async test (randomized)', function() {
+            return rohr({ test: [1, 2, 3, 4]})
+            
+            .prop('test').isArray().map(function(value) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(value * 2);
+                    }, Math.random() * 20);
+                });
+            })
+
+            .toPromise().then(function(object) {
+                object.test.length.should.equal(4);
+                object.test[0].should.equal(2);
+                object.test[1].should.equal(4);
+                object.test[2].should.equal(6);
+                object.test[3].should.equal(8);
+            });
+        });
+
+        it('mix sync/async test', function() {
+            return rohr({ test: [1, 2, 3, 4]})
+            
+            .prop('test').isArray().map(function(value) {
+                if(value % 2 == 0) {                
+                    return new Promise(function(resolve, reject) {
+                        setTimeout(function() {
+                            resolve(value * 2);
+                        }, 20);
+                    });
+                } else {
+                    return value * 2;
+                }
+            })
+
+            .toPromise().then(function(object) {
+                object.test.length.should.equal(4);
+                object.test[0].should.equal(2);
+                object.test[1].should.equal(4);
+                object.test[2].should.equal(6);
+                object.test[3].should.equal(8);
+            });
+        });
     });
 });

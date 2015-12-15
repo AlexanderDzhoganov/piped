@@ -9,7 +9,7 @@
 ### Usage
 
 ```es6
-var rohr = require('./lib/rohr');
+var rohr = require('rohr');
 
 var input = {
     foo: "4",

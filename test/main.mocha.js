@@ -30,7 +30,21 @@ describe('rohr', function() {
                 return Promise.resolve();
             });
         });
-    })
+    });
+
+    describe('nuke', function() {
+        it('should remove a property', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').nuke()
+
+            .toPromise().then(function(object) {
+                if(object.foo) {
+                    return Promise.reject();
+                }
+            });
+        });
+    });
 
     describe('rename', function() {
         it('test 1', function() {

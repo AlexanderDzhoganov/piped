@@ -3,7 +3,7 @@ sudo: required
 node_js:
   - "4.1"
 before_install:
-  - pip install codecov
+  - sudo pip install codecov
 install:
   - npm install
 after_success:

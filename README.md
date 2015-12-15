@@ -44,7 +44,7 @@ rename(propertyName)            | Renames the currently selected property.
 rescope(propertyPath)           | Moves the currently selected property to a new scope. The path starts from the root of the object and accepts dots `.` (e.g. `foo.bar`). Any non-existing properties are created automatically, existing properties are overwritten.
 broadcast([propertyName/array]) | Broadcasts the value of the currently selected property to one or more other properties. Single argument is either a string or an array of strings.
 
-### Usage
+### Example:
 
 ```es6
 var rohr = require('rohr');

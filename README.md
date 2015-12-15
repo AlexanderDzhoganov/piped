@@ -56,3 +56,37 @@ piped(input)
 });
 
 ```
+
+Result:
+```json
+IN: {
+    "foo": "4",
+    "bar": {
+        "yolo": 420,
+        "trolo": {
+            "bolo": 4
+        }
+    },
+    "testId": 1
+}
+ERR: []
+OUT: {
+    "foo": 8,
+    "bar": {
+        "yolo": "xxxNoScope420xxx",
+        "trolo": {
+            "bolo": 4
+        }
+    },
+    "more": {
+        "nested": {
+            "stuff": {
+                "testId": {
+                    "id": 1,
+                    "DATA": "more stuff"
+                }
+            }
+        }
+    }
+}
+```

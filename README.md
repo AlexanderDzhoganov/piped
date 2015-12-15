@@ -1,3 +1,5 @@
+![](https://travis-ci.org/AlexanderDzhoganov/rohr.js.svg?branch=master)
+
 # Rohr.js
 ## Data validation & transformation library
 

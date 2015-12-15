@@ -91,3 +91,30 @@ OUT: {
     }
 }
 ```
+
+## API
+
+Method                          | Description                                                
+------------------------------- | ---------------------------------------------------------------------------------------
+toPromise(ignoreErrors)         | Returns a promise that resolves to the transformed object, or is rejected with a list of errors
+resolve()                       |
+object()                        |
+error()                         |
+prop(propertyName)              |
+optional(propertyName)          |
+set(propertyName, [value/fn])   | 
+nuke()                          |
+scope()                         |
+scopeBack()                     |
+rootScope()                     |
+castTo(typeName)                |
+transform(fn)                   |
+isString()                      |
+isNumber()                      |
+isDate()                        |
+isArray()                       |
+isObject()                      |
+lookup([array/object], key)     |
+map(fn)                         |
+rename(propertyName)            |
+rescope(propertyPath)           |

@@ -1,0 +1,25 @@
+{
+  "name": "piped",
+  "version": "0.0.1",
+  "description": "Data transformation library",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexanderDzhoganov/piped.git"
+  },
+  "author": "Alexander Dzhoganov (alexander.dzhoganov@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlexanderDzhoganov/piped/issues"
+  },
+  "homepage": "https://github.com/AlexanderDzhoganov/piped#readme",
+  "devDependencies": {
+    "should": "^8.0.1"
+  },
+  "dependencies": {
+    "lodash": "^3.10.1"
+  }
+}

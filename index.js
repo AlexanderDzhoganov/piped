@@ -1,10 +1,3 @@
-# piped
-
-## Data transformation toolkit
-
-Example usage:
-
-```es6
 var piped = require('./lib/piped');
 
 var input = {
@@ -54,5 +47,3 @@ piped(input)
 
     console.log('OUT: ' + JSON.stringify(object, null, 4));
 });
-
-```

@@ -1,11 +1,11 @@
-# piped
+# 
 
 ## Data transformation toolkit
 
 Example usage:
 
 ```es6
-var piped = require('./lib/piped');
+var rohr = require('./lib/rohr');
 
 var input = {
     foo: "4",
@@ -26,7 +26,7 @@ var data = [
 
 console.log('IN: ' + JSON.stringify(input, null, 4));
 
-piped(input)
+rohr(input)
 
 .prop('foo').isString().castTo('integer').transform(function(val) {
     return val * 2;

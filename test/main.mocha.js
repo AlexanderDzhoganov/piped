@@ -1,11 +1,11 @@
 var should = require('should');
 
-var piped = require('./../lib/piped');
+var rohr = require('./../lib/rohr');
 
-describe('piped', function() {
+describe('rohr', function() {
     describe('constructor', function() {
-        it('should create a new piped object', function() {
-            var instance = piped({foo: 'bar'});
+        it('should create a new rohr object', function() {
+            var instance = rohr({foo: 'bar'});
             instance._object.foo.should.equal('bar');
         });
     });

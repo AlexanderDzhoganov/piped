@@ -47,12 +47,10 @@ piped(input)
 
 .rootScope()
 
-.resolve(function(object, err) {
-    if(err) {
-        console.log('ERR: ' + JSON.stringify(err, null, 4));
-    }
-
-    console.log('OUT: ' + JSON.stringify(object, null, 4));
+.toPromise().then(function(obj) {
+    console.log('OUT: ' + JSON.stringify(obj, null, 4));
+}).catch(function(err) {
+    console.log('ERR: ' + JSON.stringify(err, null, 4));
 });
 
 ```
@@ -69,7 +67,6 @@ IN: {
     },
     "testId": 1
 }
-ERR: []
 OUT: {
     "foo": 8,
     "bar": {

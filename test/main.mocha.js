@@ -75,7 +75,7 @@ describe('rohr', function() {
     });
 
     describe('rename', function() {
-        it('test 1', function() {
+        it('should rename a property #1', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').rename('baz')
@@ -85,7 +85,7 @@ describe('rohr', function() {
             });
         })
 
-        it('test 2', function() {
+        it('should rename a property #2', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').transform(function(val) {
@@ -96,6 +96,40 @@ describe('rohr', function() {
                 object.test.should.equal('hello');
             });
         });
+
+        it('with scope()', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').transform(function(val) {
+                return { hello: 'world' };
+            }).rename('test').scope()
+                .prop('hello').isString()
+
+            .rootScope()
+
+            .toPromise().then(function(object) {
+                object.test.hello.should.equal('world');
+            });
+        })
+
+        it('with scope() (async)', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve({ hello: 'world' })
+                    }, 50);
+                });
+            }).rename('test').scope()
+                .prop('hello').isString()
+
+            .rootScope()
+
+            .toPromise().then(function(object) {
+                object.test.hello.should.equal('world');
+            });
+        })
     })
 
     describe('transform', function() {
@@ -116,7 +150,7 @@ describe('rohr', function() {
                 return new Promise(function(resolve, reject) {
                     setTimeout(function() {
                         resolve('hello');
-                    }, 50);
+                    }, 20);
                 });
             }).transform(function(val) {
                 return new Promise(function(resolve, reject) {
@@ -146,7 +180,7 @@ describe('rohr', function() {
                 return new Promise(function(resolve, reject) {
                     setTimeout(function() {
                         resolve(val * 2);
-                    }, 40);
+                    }, 20);
                 });
             })
 

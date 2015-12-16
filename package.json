@@ -1,6 +1,6 @@
 {
   "name": "rohr",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Validation and data transformation library",
   "main": "index.js",
   "scripts": {
@@ -24,5 +24,6 @@
   },
   "dependencies": {
     "lodash": "^3.10.1"
-  }
+  },
+  "tonicExampleFilename": "example.js"
 }

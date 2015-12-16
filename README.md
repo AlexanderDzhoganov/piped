@@ -54,6 +54,21 @@ Result:
 }
 ```
 
+## Handling errors
+
+Rohr does not stop when it encounters an error but instead logs it and continues processing the rest of the data.
+The list of errors can be obtained by calling `.error(callback)` where `callback` is of type `function (errors) {}`.
+Each error objects contains information about where the error occured as well as an error type. If using `.toPromise()`, any encountered errors during processing will cause the promise to be rejected. This behavior can be overriden by calling `.toPromise(true)` instead and using `.error()` to handle errors.
+
+Error type               | Description
+------------------------ | -----------------------------------------------------------------
+UndefinedProperty        | A property selected with `.prop()` was not found in the input data. Error data contains `property` which is the property name and `scope` which is the scope where the error occured.
+InvalidScopeToNonObject  | When calling `.scope()` on a non-object.
+TransformPromiseRejected | A promise returned a `.transform()` call was rejected, the rejection error can be found in the `err` property. 
+InvalidPropertyType      | A type check (e.g. `isString()`, `isNumber()`) failed. Error data: `property`, `expectedType`, `actualType`, `scope`
+LookupFailed             | A `lookup()` call failed to find a match for the selected property. Error data: `property`, `key`, `scope`
+MapOverNonArray          | When calling `.map()` on a non-array type.
+
 ## API
 
 Method                          | Description                                                

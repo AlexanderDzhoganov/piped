@@ -1087,7 +1087,7 @@ describe('rohr', function() {
 
         it('with invalid object type', function() {
             try {
-                rohr({ index: 'somethingElse' }).lookup('abc');
+                rohr({ index: 'somethingElse' }).prop('index').lookup('abc');
                 should.fail();
             } catch (err) {
                 return Promise.resolve();

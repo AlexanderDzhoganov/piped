@@ -5,7 +5,7 @@
 
 # rohr.js - validation & transformation library
 
-#### Rohr lets you:
+#### Rohr helps you to:
 - Reliably extract data from complex hierarchies
 - Validate JSON requests in your API server
 - Freely mix synchronous and asynchronous transformations on your data

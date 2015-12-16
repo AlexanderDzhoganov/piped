@@ -1096,14 +1096,76 @@ describe('rohr', function() {
     });
 
     describe('rescope()', function() {
-        xit('test #1', function() { // skipped because of bug in rescope(), have to rethink approach
+        it('test #1', function() { 
             return rohr({ foo: '1234' })
 
-            .prop('foo').rescope('bar.baz.test')
+            .prop('foo').rescope('bar')
+            .optional('nonexistent').rescope('1234')
+
+            .rootScope()
 
             .toPromise().then(function(object) {
-                console.log('OBJ: ' + JSON.stringify(object, null, 4));
-                object.bar.baz.test.should.equal('1234');
+                object.bar.foo.should.equal('1234');
+            });
+        });
+
+        it('test #2', function() { 
+            return rohr({ foo: { bar: 'abc' }})
+
+            .prop('foo').scope()
+                .prop('bar').rescope('test', true)
+
+            .rootScope()
+
+            .toPromise().then(function(object) {
+                object.test.bar.should.equal('abc');
+            });
+        });
+
+        it('test #3', function() { 
+            return rohr({ foo: { bar: 'abc' }})
+
+            .prop('foo').scope()
+                .prop('bar').rescope('test', false)
+
+            .rootScope()
+
+            .toPromise().then(function(object) {
+                object.foo.test.bar.should.equal('abc');
+            });
+        });
+
+        it('test #4', function() { 
+            return rohr({ foo: { bar: 'abc' }})
+
+            .prop('foo').scope()
+                .prop('bar').rescope('some.deep.hierarchy.stuff.hello.world')
+
+            .rootScope()
+
+            .toPromise().then(function(object) {
+                object.some.deep.hierarchy.stuff.hello.world.bar.should.equal('abc');
+            });
+        });
+
+        it('test #5', function() { 
+            return rohr({ foo: { bar: 'abc', baz: 1234 }})
+
+            .prop('foo').scope()
+                .prop('baz').transform(function(val) {
+                    return new Promise(function(resolve, reject) {
+                        setTimeout(function() {
+                            resolve(val * 2);
+                        }, 10);
+                    });
+                })
+                .prop('bar').rescope('foo.test')
+
+            .rootScope()
+
+            .toPromise().then(function(object) {
+                object.foo.test.bar.should.equal('abc');
+                object.foo.baz.should.equal(2468);
             });
         });
     });

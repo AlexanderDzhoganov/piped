@@ -96,6 +96,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             });
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 1234})
+            .prop('foo').ifEquals('42')
+                .prop('test').value(36)
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal(1234);
+            });
+        });
     });
 
     describe('optional()', function() {
@@ -131,6 +142,17 @@ describe('rohr', function() {
             .toPromise().then(function(object) {
                 object.foo.should.equal('test');
                 object.i.should.equal(12);
+            });
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 1234})
+            .prop('foo').ifEquals('42')
+                .optional('test').value(36)
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal(1234);
             });
         });
     });
@@ -180,6 +202,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 1234})
+            .prop('foo').ifEquals('42')
+                .prop('test').isString()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal(1234);
+            });
+        });
     });
 
     describe('isNumber()', function() {
@@ -226,6 +259,17 @@ describe('rohr', function() {
             } catch (err) {
                 return Promise.resolve();
             }
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').isNumber()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
         });
     });
 
@@ -274,6 +318,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').isBoolean()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
+        });
     });
 
     describe('isObject()', function() {
@@ -320,6 +375,17 @@ describe('rohr', function() {
             } catch (err) {
                 return Promise.resolve();
             }
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').isObject()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
         });
     });
 
@@ -368,6 +434,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').isDate()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
+        });
     });
 
     describe('isArray()', function() {
@@ -414,6 +491,17 @@ describe('rohr', function() {
             } catch (err) {
                 return Promise.resolve();
             }
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').isArray()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
         });
     });
 
@@ -505,6 +593,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': '36'})
+            .prop('foo').ifEquals('42')
+                .prop('test').castTo('integer')
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('36');
+            });
+        });
     });
 
     describe('nuke()', function() {
@@ -528,6 +627,17 @@ describe('rohr', function() {
             } catch(err) {
                 return Promise.resolve();
             }
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').nuke()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
         });
     });
 
@@ -573,6 +683,17 @@ describe('rohr', function() {
                 });
             }).toPromise().then(function(object) {
                 object.foo.should.equal('bar');
+            });
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .set('test', 'something else')
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
             });
         });
     });
@@ -648,6 +769,17 @@ describe('rohr', function() {
             } catch(err) {
                 return Promise.resolve();
             }
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').value(1234)
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
         });
     });
 
@@ -740,6 +872,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').rename('something else')
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
+        });
     });
 
     describe('transform()', function() {
@@ -822,6 +965,18 @@ describe('rohr', function() {
             });
         });
 
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': 'hello world'})
+            .prop('foo').ifEquals('42')
+                .prop('test').transform(function(val) {
+                    return 'bla bla';
+                })
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.should.equal('hello world');
+            });
+        });
     });
 
     describe('scope()', function() {
@@ -894,6 +1049,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': { baz: 'hello world'}})
+            .prop('foo').ifEquals('42')
+                .prop('test').scope().prop('baz').value(42)
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.baz.should.equal('hello world');
+            });
+        });
     });
 
     describe('scopeBack()', function() {
@@ -905,6 +1071,17 @@ describe('rohr', function() {
 
             .toPromise().then(function(object) {
                 object.foo.bar.should.equal('baz');
+            });
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': {baz: 24}})
+            .prop('foo').ifEquals('42')
+                .prop('test').scope().scopeBack()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test.baz.should.equal(24);
             });
         });
     });
@@ -1056,6 +1233,20 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': [1, 2]})
+            .prop('foo').ifEquals('42')
+                .prop('test').map(function(value) {
+                    return value * 2;
+                })
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.test[0].should.equal(1);
+                object.test[1].should.equal(2);
+            });
+        });
     });
 
     describe('broadcast()', function() {
@@ -1106,6 +1297,19 @@ describe('rohr', function() {
             } catch (err) {
                 return Promise.resolve();
             }
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 'bar', 'test': [1, 2]})
+            .prop('foo').ifEquals('42')
+                .prop('test').broadcast('foobar')
+            .endIf()
+
+            .toPromise().then(function(object) {
+                if(object.foobar) {
+                    return Promise.reject();
+                }
+            });
         });
     });
 
@@ -1197,6 +1401,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 0})
+            .prop('foo').ifEquals('42')
+                .prop('test').lookup([{id: 0}], 'id')
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal(0);
+            });
+        });
     });
 
     describe('rescope()', function() {
@@ -1281,6 +1496,17 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 0})
+            .prop('foo').ifEquals('42')
+                .prop('foo').rescope('bar')
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal(0);
+            });
+        });
     });
 
     describe('validate()', function() {
@@ -1361,6 +1587,97 @@ describe('rohr', function() {
         it('without property', function() {
             try {
                 rohr({}).validate(function() {});
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({foo: 0})
+            .prop('foo').ifEquals('42')
+                .prop('foo').validate(function() { return false; })
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal(0);
+            });
+        });
+    });
+
+    describe('ifEquals()', function() {
+        it('with value (passing)', function() {
+            return rohr({ foo: 'bar' })
+
+            .prop('foo').ifEquals('bar').value('baz').endIf()
+            .optional('test').ifEquals('123').value(42).endIf()
+
+            .toPromise().then(function (object) {
+                object.foo.should.equal('baz');
+            });
+        });
+
+        it('with value (failing)', function() {
+            return rohr({ foo: 'bar' })
+
+            .prop('foo').ifEquals(1234).value('baz').endIf()
+
+            .toPromise().then(function (object) {
+                object.foo.should.equal('bar');
+            });
+        });
+
+        it('with sync function (passing)', function() {
+            return rohr({ foo: 'bar' })
+
+            .prop('foo').ifEquals(function() {
+                return 'bar';
+            }).value('baz').endIf()
+            .optional('test').ifEquals('123').value(42).endIf()
+
+            .toPromise().then(function (object) {
+                object.foo.should.equal('baz');
+            });
+        });
+
+        it('with async function (passing)', function() {
+            return rohr({ foo: 'bar' })
+
+            .prop('foo').ifEquals(function() {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('bar');
+                    }, 10);
+                });
+            }).value('baz').endIf()
+            .optional('test').ifEquals('123').value(42).endIf()
+
+            .toPromise().then(function (object) {
+                object.foo.should.equal('baz');
+            });
+        });
+
+        it('without selected property', function() {
+            try {
+                rohr({}).ifEquals('test');
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
+        });
+
+        it('nested ifEquals', function() {
+            try {
+                rohr({ foo: 123 }).prop('foo').ifEquals('test').ifEquals('test2')
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
+        });
+
+        it('toPromise() without endIf()', function() {
+            try {
+                rohr({ foo: 123 }).prop('foo').ifEquals('test').toPromise()
                 should.fail();
             } catch(err) {
                 return Promise.resolve();

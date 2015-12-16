@@ -66,7 +66,7 @@ scope()                         | Enters the scope of the currently selected pro
 scopeBack()                     | Brings you back to the previous scope.
 rootScope()                     | Brings you back to the root scope.
 castTo(typeName)                | Casts the currently selected property to a specific type given by `typeName`. Allowed values are: `integer`, `float`, `string`, `date`.
-transform(fn)                   | Transforms the currently selected property with a function of the type `function (value) {}`. The function can return a new value or a promise resolving to the new value.
+transform(fn)                   | Transforms the currently selected property with a function of the type `function (value, [scope], [rootScope]) {}`. The function can return a new value or a promise resolving to the new value.
 isString()                      | Ensures the currently selected property is of type `String`, adds a validation error otherwise.
 isNumber()                      | Ensures the currently selected property is of type `Number`, adds a validation error otherwise.
 isDate()                        | Ensures the currently selected property is of type `Date`, adds a validation error otherwise.

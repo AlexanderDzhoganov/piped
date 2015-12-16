@@ -891,7 +891,11 @@ describe('rohr', function() {
 
             .prop('foo').transform(function(val) {
                 return 'baz';
-            }).toPromise().then(function(object) {
+            })
+
+            .optional('nonexistent').transform(function() {})
+
+            .toPromise().then(function(object) {
                 object.foo.should.equal('baz');
             });
         });
@@ -963,6 +967,15 @@ describe('rohr', function() {
                 err[0].scope.should.equal('');
                 err[0].property.should.equal('foo');
             });
+        });
+
+        it('without selected property', function() {
+            try {
+                rohr({}).transform(function() {});
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
         });
 
         it('should do nothing while matchStatus === false', function() {
@@ -1121,6 +1134,17 @@ describe('rohr', function() {
 
             .toPromise().then(function(object) {
                 object.foo.should.equal(42);
+            });
+        });
+
+        it('should do nothing while matchStatus === false', function() {
+            return rohr({'test': {baz: 24}})
+            .prop('test').scope().prop('baz').ifEquals('test')
+                .rootScope()
+            .endIf()
+
+            .toPromise().then(function(object) {
+                object.baz.should.equal(24);
             });
         });
     });
@@ -1650,7 +1674,28 @@ describe('rohr', function() {
                     }, 10);
                 });
             }).value('baz').endIf()
-            .optional('test').ifEquals('123').value(42).endIf()
+
+            .toPromise().then(function (object) {
+                object.foo.should.equal('baz');
+            });
+        });
+
+        it('with async function (passing) #2', function() {
+            return rohr({ foo: 'bar' })
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('val');
+                    }, 10);
+                });
+            }).ifEquals(function() {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('val');
+                    }, 10);
+                });
+            }).value('baz').endIf()
 
             .toPromise().then(function (object) {
                 object.foo.should.equal('baz');
@@ -1683,5 +1728,24 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('endIf() without ifEquals()', function() {
+            try {
+                rohr({ foo: 123 }).prop('foo').endIf()
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
+        });
+
+        it('endIf() without selected property', function() {
+            try {
+                rohr({ foo: 123 }).endIf()
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
+        });
+
     });
 });

@@ -576,6 +576,24 @@ describe('rohr', function() {
             });
         });
 
+        it('should set a property (async function) #3', function() {
+            return rohr({ foo: 1234 }).prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) { 
+                    setTimeout(function() {
+                        resolve('bar');
+                    }, 40);
+                });
+            }).value(function() {
+                return new Promise(function(resolve, reject) { 
+                    setTimeout(function() {
+                        resolve('bar');
+                    }, 40);
+                });
+            }).toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
+
         it('without selected property', function() {
             try {
                 rohr({ foo: 1234 }).value(123);
@@ -840,6 +858,45 @@ describe('rohr', function() {
 
             .toPromise().then(function(object) {
                 object.foo.bar.should.equal('baz');
+            });
+        });
+    });
+
+    describe('rootScope()', function() {
+        it('test #1', function() {
+            return rohr({ test: 2 }).rootScope().prop('test')
+
+            .toPromise().then(function(object) {
+                object.test.should.equal(2);
+            });
+        });
+
+        it('test #2', function() {
+            return rohr({ test: 2, foo: { bar: { baz: 1 } } })
+
+            .prop('foo').scope()
+                .prop('bar').scope()
+
+            .rootScope().prop('test')
+
+            .toPromise().then(function(object) {
+                object.test.should.equal(2);
+            });
+        });
+
+        it('test #3', function() {
+            return rohr({ foo: 42, very: { deep: { hierarchy: { of: { stuff: {}}}}}})
+
+            .prop('very').scope()
+                .prop('deep').scope()
+                    .prop('hierarchy').scope()
+                        .prop('of').scope()
+                            .prop('stuff').scope()
+
+            .rootScope()
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal(42);
             });
         });
     });
@@ -1167,6 +1224,15 @@ describe('rohr', function() {
                 object.foo.test.bar.should.equal('abc');
                 object.foo.baz.should.equal(2468);
             });
+        });
+
+        it('without selected property', function() {
+            try {
+                rohr({}).rescope('foo')
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
         });
     });
 });

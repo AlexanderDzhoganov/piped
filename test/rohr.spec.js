@@ -229,6 +229,53 @@ describe('rohr', function() {
         });
     });
 
+    describe('isBoolean()', function() {
+        it('test #1 (passing)', function() {
+            return rohr({foo: true})
+
+            .prop('foo').isBoolean()
+            .optional('hello').isBoolean()
+
+            .toPromise();
+        });
+
+        it('test #2 (passing)', function() {
+            return rohr({foo: 'bla'})
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(true);
+                    }, 10);
+                });
+            }).isBoolean()
+            .optional('hello').isBoolean()
+
+            .toPromise();
+        });
+
+        it('test #3 (failing)', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').isBoolean()
+
+            .toPromise().then(function() {
+                return Promise.reject();
+            }).catch(function() {
+                return Promise.resolve();
+            });
+        });
+
+        it('without selected property', function() {
+            try {
+                rohr({foo: 1234}).isBoolean()
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
+    });
+
     describe('isObject()', function() {
         it('test #1 (passing)', function() {
             return rohr({foo: {}})
@@ -1229,6 +1276,91 @@ describe('rohr', function() {
         it('without selected property', function() {
             try {
                 rohr({}).rescope('foo')
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
+        });
+    });
+
+    describe('validate()', function() {
+        it('test #1 (passing)', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').validate(function(value) {
+                return value === 'bar';
+            })
+            .optional('nonexistent').validate(function() { return false; })
+
+            .toPromise();
+        });
+
+        it('test #1 (failing)', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').validate(function(value) {
+                return false;
+            }).toPromise().then(function() {
+                should.fail();
+            }, function(err) {
+                err.length.should.equal(1);
+                err[0].type.should.equal('ValidationError');
+                err[0].property.should.equal('foo');
+                err[0].scope.should.equal('');
+            });
+        });
+
+        it('test #2 (passing)', function() {
+            return rohr({foo: 1234})
+
+            .prop('foo').validate(function(value) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(true);
+                    }, 10);
+                });
+            }).toPromise();
+        });
+
+        it('test #2 (failing)', function() {
+            return rohr({foo: 1234})
+
+            .prop('foo').validate(function(value) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        reject('someErrorMessage')
+                    }, 10);
+                });
+            }).toPromise().then(function() {
+                should.fail('promise should be rejected');
+            }, function(err) {
+                err.length.should.equal(1);
+                err[0].type.should.equal('ValidationError');
+                err[0].err.should.equal('someErrorMessage');
+            });
+        });
+
+        it('test #3', function() {
+            return rohr({foo: 1234})
+
+            .prop('foo').transform(function(value) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('test');
+                    }, 10);
+                });
+            }).validate(function(value) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(value === 'test');
+                    }, 10);
+                });
+            }).toPromise();
+        });
+
+        it('without property', function() {
+            try {
+                rohr({}).validate(function() {});
                 should.fail();
             } catch(err) {
                 return Promise.resolve();

@@ -24,5 +24,6 @@
   },
   "dependencies": {
     "lodash": "^3.10.1"
-  }
+  },
+  "tonicExampleFilename": "example.js"
 }

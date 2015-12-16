@@ -2,9 +2,14 @@
 [![](https://travis-ci.org/AlexanderDzhoganov/rohr.js.svg?branch=master)](https://travis-ci.org/AlexanderDzhoganov/rohr.js)
 [![codecov.io](https://codecov.io/github/AlexanderDzhoganov/rohr.js/coverage.svg?branch=master)](https://codecov.io/github/AlexanderDzhoganov/rohr.js?branch=master)
 
-# Rohr.js - validation & transformation library
+# rohr.js - validation & transformation library
 
-Work in progress! [See the test suite for examples](https://github.com/AlexanderDzhoganov/rohr.js/blob/master/test/rohr.spec.js)
+#### Rohr lets you:
+- Reliably extract data from complex hierarchies
+- Validate JSON requests in your API server
+- Freely mix synchronous and asynchronous transformations on your data
+- Integrate APIs together
+- Easily bring in legacy data 
 
 ### Installation
 
@@ -19,6 +24,8 @@ npm test
 ```
 
 ### Basic example
+
+Rohr is under active development and some of the documentation may be lacking or obsolete. [See the test suite for up-to-date examples](https://github.com/AlexanderDzhoganov/rohr.js/blob/master/test/rohr.spec.js).
 
 ```es6
 var rohr = require('rohr');

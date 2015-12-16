@@ -18,13 +18,13 @@ npm install
 npm test
 ```
 
-### Usage
+### Basic example
 
 ```es6
 var rohr = require('rohr');
 
 var input = {
-    foo: '42'
+    "foo": "42"
 };
 
 rohr(input)
@@ -33,8 +33,8 @@ rohr(input)
     return val * 2;
 })
 
-.toPromise().then(function(obj) {
-    console.log(JSON.stringify(obj, null, 4));
+.toPromise().then(function(object) {
+    console.log(object);
 });
 
 ```
@@ -42,7 +42,7 @@ rohr(input)
 Result:
 ```json
 {
-    foo: 84
+    "foo": 84
 }
 ```
 

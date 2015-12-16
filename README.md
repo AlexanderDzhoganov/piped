@@ -4,7 +4,7 @@
 # Rohr.js
 ## Data validation & transformation library
 
-### Work in progress! [See the test suite for examples](https://github.com/AlexanderDzhoganov/rohr.js/blob/master/test/main.mocha.js)
+### Work in progress! [See the test suite for examples](https://github.com/AlexanderDzhoganov/rohr.js/blob/master/test/rohr.spec.js)
 
 ### Installation
 

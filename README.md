@@ -64,7 +64,7 @@ Error type               | Description
 ------------------------ | -----------------------------------------------------------------
 UndefinedProperty        | A property selected with `.prop()` was not found in the input data. Error data contains `property` which is the property name and `scope` which is the scope where the error occured.
 InvalidScopeToNonObject  | When calling `.scope()` on a non-object.
-TransformPromiseRejected | A promise returned a `.transform()` call was rejected, the rejection error can be found in the `err` property. 
+TransformPromiseRejected | A promise returned by a `.transform()` call was rejected, the rejection error can be found in the `err` property. 
 InvalidPropertyType      | A type check (e.g. `isString()`, `isNumber()`) failed. Error data: `property`, `expectedType`, `actualType`, `scope`
 LookupFailed             | A `lookup()` call failed to find a match for the selected property. Error data: `property`, `key`, `scope`
 MapOverNonArray          | When calling `.map()` on a non-array type.
@@ -86,6 +86,7 @@ castTo(typeName)                | Casts the currently selected property to a spe
 transform(fn)                   | Transforms the currently selected property with a function of the type `function (value, [scope], [rootScope]) {}`. The function can return a new value or a promise resolving to the new value.
 isString()                      | Ensures the currently selected property is of type `String`, adds a validation error otherwise.
 isNumber()                      | Ensures the currently selected property is of type `Number`, adds a validation error otherwise.
+isBoolean()                      | Ensures the currently selected property is of type `Boolean`, adds a validation error otherwise.
 isDate()                        | Ensures the currently selected property is of type `Date`, adds a validation error otherwise.
 isArray()                       | Ensures the currently selected property is of type `Array`, adds a validation error otherwise.
 isObject()                      | Ensures the currently selected property is of type `Object`, adds a validation error otherwise.

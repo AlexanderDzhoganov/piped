@@ -1,5 +1,5 @@
 var should = require('should');
-var rohr = require('./../lib/rohr');
+var rohr = require('./../index');
 
 describe('rohr', function() {
     describe('constructor', function() {

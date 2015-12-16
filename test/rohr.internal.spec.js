@@ -1,5 +1,5 @@
 var should = require('should');
-var rohr = require('./../lib/rohr');
+var rohr = require('./../index');
 
 describe('rohr.internal', function() {
     describe('_transformProp()', function() {
@@ -16,5 +16,5 @@ describe('rohr.internal', function() {
         });
     });
 
-    
+
 });

@@ -2,10 +2,9 @@
 [![](https://travis-ci.org/AlexanderDzhoganov/rohr.js.svg?branch=master)](https://travis-ci.org/AlexanderDzhoganov/rohr.js)
 [![codecov.io](https://codecov.io/github/AlexanderDzhoganov/rohr.js/coverage.svg?branch=master)](https://codecov.io/github/AlexanderDzhoganov/rohr.js?branch=master)
 
-# Rohr.js
-## Data validation & transformation library
+# Rohr.js - validation & transformation library
 
-### Work in progress! [See the test suite for examples](https://github.com/AlexanderDzhoganov/rohr.js/blob/master/test/rohr.spec.js)
+Work in progress! [See the test suite for examples](https://github.com/AlexanderDzhoganov/rohr.js/blob/master/test/rohr.spec.js)
 
 ### Installation
 
@@ -13,20 +12,44 @@
 npm install rohr
 ```
 
-To run the tests:
+Running the tests:
 ```
-npm install -g mocha
+npm install
 npm test
+```
+
+### Usage
+
+```es6
+var rohr = require('rohr');
+
+var input = {
+    foo: '42'
+};
+
+rohr(input)
+
+.prop('foo').isString().castTo('integer').transform(function(val) {
+    return val * 2;
+})
+
+.toPromise().then(function(obj) {
+    console.log(JSON.stringify(obj, null, 4));
+});
+
+```
+
+Result:
+```json
+{
+    foo: 84
+}
 ```
 
 ## API
 
 Method                          | Description                                                
 ------------------------------- | ---------------------------------------------------------------------------------------
-toPromise(ignoreErrors)         | Returns a promise that resolves to the transformed object, or is rejected with a list of errors
-resolve()                       |
-object()                        |
-error()                         |
 prop(propertyName)              | Selects a property in the current scope, adds a validation error if the property is `null` or `undefined`.
 optional(propertyName)          | Selects a property in the current scope, no validation if performed if the property exists. Any further chained methods for this property will be ignored if its value is `null` or `undefined`.
 set(propertyName, [value/fn])   | Sets the value for a property, value can be a value or a function returning a value/ promise resolving to a value.
@@ -47,90 +70,7 @@ map(fn)                         | Maps every object of the currently selected `a
 rename(propertyName)            | Renames the currently selected property.
 rescope(propertyPath)           | Moves the currently selected property to a new scope. The path starts from the root of the object and accepts dots `.` (e.g. `foo.bar`). Any non-existing properties are created automatically, existing properties are overwritten.
 broadcast([propertyName/array]) | Broadcasts the value of the currently selected property to one or more other properties. Single argument is either a string or an array of strings.
-
-### Example:
-
-```es6
-var rohr = require('rohr');
-
-var input = {
-    foo: "4",
-    bar: {
-        "yolo": 420,
-        "trolo": {
-            "bolo": 4
-        }
-    },
-    testId: 1
-};
-
-var data = [
-    { id: 0, data: 'stuff' },
-    { id: 1, data: 'more stuff' },
-    { id: 2, data: 'even more stuff' }
-]
-
-console.log('IN: ' + JSON.stringify(input, null, 4));
-
-rohr(input)
-
-.prop('foo').isString().castTo('integer').transform(function(val) {
-    return val * 2;
-})
-
-.prop('bar').isObject().scope()
-    .prop('yolo').isNumber().castTo('string').transform(function(val) {
-        return 'xxxNoScope' + val + 'xxx';
-    })
-
-    .prop('trolo').scope()
-        .prop('bolo').isNumber()
-
-.rootScope()
-
-.prop('testId').isNumber().lookup(data, 'id').rescope('more.nested.stuff').scope()
-    .prop('data').isString().rename('DATA')
-
-.rootScope()
-
-.toPromise().then(function(obj) {
-    console.log('OUT: ' + JSON.stringify(obj, null, 4));
-}).catch(function(err) {
-    console.log('ERR: ' + JSON.stringify(err, null, 4));
-});
-
-```
-
-Result:
-```json
-IN: {
-    "foo": "4",
-    "bar": {
-        "yolo": 420,
-        "trolo": {
-            "bolo": 4
-        }
-    },
-    "testId": 1
-}
-OUT: {
-    "foo": 8,
-    "bar": {
-        "yolo": "xxxNoScope420xxx",
-        "trolo": {
-            "bolo": 4
-        }
-    },
-    "more": {
-        "nested": {
-            "stuff": {
-                "testId": {
-                    "id": 1,
-                    "DATA": "more stuff"
-                }
-            }
-        }
-    }
-}
-```
-
+toPromise(ignoreErrors)         | Returns a promise that resolves to the transformed object, or is rejected with a list of errors
+resolve()                       |
+object()                        |
+error()                         |

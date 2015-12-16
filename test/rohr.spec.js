@@ -770,7 +770,7 @@ describe('rohr', function() {
                 err.length.should.equal(1);
                 err[0].error.should.equal('err');
                 err[0].type.should.equal('TransformPromiseRejected');
-                err[0].scope.should.equal('foo');
+                err[0].scope.should.equal('');
                 err[0].property.should.equal('foo');
             });
         });
@@ -826,7 +826,7 @@ describe('rohr', function() {
                 err.length.should.equal(1);
                 err[0].type.should.equal('InvalidScopeToNonObject');
                 err[0].property.should.equal('foo');
-                err[0].scope.should.equal('foo')
+                err[0].scope.should.equal('')
             });
         });
 

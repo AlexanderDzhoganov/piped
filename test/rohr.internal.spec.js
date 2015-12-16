@@ -42,10 +42,10 @@ describe('rohr.internal', function() {
     describe('_getScope()', function() {
         it('test #1', function() {
             return rohr({ test: 2 }).prop('test')
-            ._getScope().should.equal('test');
+            ._getScope().should.equal('');
         });
 
-        it('test #1', function() {
+        it('test #2', function() {
             return rohr({ test: { foo: 'bar' } }).prop('test').scope()
             ._getScope().should.equal('test');
         });

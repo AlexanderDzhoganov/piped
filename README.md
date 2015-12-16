@@ -1,6 +1,7 @@
 [![npm version](https://badge.fury.io/js/rohr.svg)](https://badge.fury.io/js/rohr)
 [![](https://travis-ci.org/AlexanderDzhoganov/rohr.js.svg?branch=master)](https://travis-ci.org/AlexanderDzhoganov/rohr.js)
 [![codecov.io](https://codecov.io/github/AlexanderDzhoganov/rohr.js/coverage.svg?branch=master)](https://codecov.io/github/AlexanderDzhoganov/rohr.js?branch=master)
+[![](https://david-dm.org/AlexanderDzhoganov/rohr.js.svg)](https://david-dm.org/AlexanderDzhoganov/rohr.js)
 
 # rohr.js - validation & transformation library
 

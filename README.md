@@ -96,7 +96,7 @@ rename(propertyName)            | Renames the currently selected property.
 rescope(propertyPath)           | Moves the currently selected property to a new scope. The path starts from the root of the object and accepts dots `.` (e.g. `foo.bar`). Any non-existing properties are created automatically, existing properties are overwritten.
 broadcast([propertyName/array]) | Broadcasts the value of the currently selected property to one or more other properties. Single argument is either a string or an array of strings.
 validate(fn)                    | Validates the value of the currently selected property using `fn` which is a `function (value) {}` which returns a boolean or a promise. A resolved promise means the validation is successful and no further action is taken, a rejected promise will result in a `ValidationError`, the rejection error can be found in the `err` property of the error object.
-if([value/fn])                  | Opens a matching scope where any calls before `endIf()` will be ignored if argument value is `false` or if the passed function returns false or a promise resolving to `false`.
+ifEquals([value/fn])                  | Opens a matching scope where any calls before `endIf()` will be ignored if argument value is `false` or if the passed function returns false or a promise resolving to `false`.
 endIf()                         | Closes a matching scope opened by `ifEquals`.
 toPromise(ignoreErrors)         | Returns a promise that resolves to the transformed object, or is rejected with a list of errors
 resolve()                       |

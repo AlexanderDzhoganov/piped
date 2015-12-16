@@ -15,11 +15,63 @@ describe('rohr', function() {
                 object.foo.should.equal('bar');
             }).resolve();
         });
+ 
+        it('should return the object #2', function() {
+            return rohr({foo: 'bar'}).prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('abc');
+                    }, 15);
+                })
+            }).object(function(object) {
+                object.foo.should.equal('abc');
+            }).resolve();
+        });
 
         it('should return the validation errors', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').isNumber()
+
+            .error(function(errors) {
+                errors.length.should.equal(1);
+            })
+
+            .resolve();
+        });
+    });
+
+    describe('error()', function() {
+        it('should return no errors', function() {
+            return rohr({foo: 'bar'}).object(function(object) {
+                object.foo.should.equal('bar');
+            }).error(function(err) {
+                err.length.should.equal(0);
+            }).resolve();
+        });
+
+        it('should return the validation errors', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').isNumber()
+
+            .error(function(errors) {
+                errors.length.should.equal(1);
+            })
+
+            .resolve();
+        });
+
+        it('should return the validation errors #2', function() {
+            return rohr({foo: 4})
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('abc');
+                    }, 15);
+                })
+            }).isNumber()
 
             .error(function(errors) {
                 errors.length.should.equal(1);
@@ -93,6 +145,21 @@ describe('rohr', function() {
             .toPromise();
         });
 
+        it('test #2 (passing)', function() {
+            return rohr({foo: 12})
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve('1234');
+                    }, 10);
+                });
+            }).isString()
+            .optional('hello').isString()
+
+            .toPromise();
+        });
+
         it('test 2 (failing)', function() {
             return rohr({foo: 1234})
 
@@ -116,7 +183,7 @@ describe('rohr', function() {
     });
 
     describe('isNumber()', function() {
-        it('test 1 (passing)', function() {
+        it('test #1 (passing)', function() {
             return rohr({foo: 4})
 
             .prop('foo').isNumber()
@@ -125,7 +192,22 @@ describe('rohr', function() {
             .toPromise();
         });
 
-        it('test 2 (failing)', function() {
+        it('test #2 (passing)', function() {
+            return rohr({foo: 'bla'})
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(1234);
+                    }, 10);
+                });
+            }).isNumber()
+            .optional('hello').isNumber()
+
+            .toPromise();
+        });
+
+        it('test #3 (failing)', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').isNumber()
@@ -148,7 +230,7 @@ describe('rohr', function() {
     });
 
     describe('isObject()', function() {
-        it('test 1 (passing)', function() {
+        it('test #1 (passing)', function() {
             return rohr({foo: {}})
 
             .prop('foo').isObject()
@@ -157,7 +239,22 @@ describe('rohr', function() {
             .toPromise();
         });
 
-        it('test 2 (failing)', function() {
+        it('test #2 (passing)', function() {
+            return rohr({foo: 'bla'})
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve({abc: 123});
+                    }, 10);
+                });
+            }).isObject()
+            .optional('hello').isObject()
+
+            .toPromise();
+        });
+
+        it('test #3 (failing)', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').isObject()
@@ -180,7 +277,7 @@ describe('rohr', function() {
     });
 
     describe('isDate()', function() {
-        it('test 1 (passing)', function() {
+        it('test #1 (passing)', function() {
             return rohr({foo: new Date(Date.now())})
 
             .prop('foo').isDate()
@@ -189,7 +286,22 @@ describe('rohr', function() {
             .toPromise();
         });
 
-        it('test 2 (failing)', function() {
+        it('test #2 (passing)', function() {
+            return rohr({foo: 'bla'})
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(new Date(Date.now()));
+                    }, 10);
+                });
+            }).isDate()
+            .optional('hello').isDate()
+
+            .toPromise();
+        });
+
+        it('test #3 (failing)', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').isDate()
@@ -212,7 +324,7 @@ describe('rohr', function() {
     });
 
     describe('isArray()', function() {
-        it('test 1 (passing)', function() {
+        it('test #1 (passing)', function() {
             return rohr({foo: [1, 2]})
 
             .prop('foo').isArray()
@@ -221,7 +333,22 @@ describe('rohr', function() {
             .toPromise();
         });
 
-        it('test 2 (failing)', function() {
+        it('test #2 (passing)', function() {
+            return rohr({foo: 'bla'})
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve([1, 2]);
+                    }, 10);
+                });
+            }).isArray()
+            .optional('hello').isArray()
+
+            .toPromise();
+        });
+
+        it('test #3 (failing)', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').isArray()
@@ -383,11 +510,34 @@ describe('rohr', function() {
                 object.foo.should.equal('bar');
             });
         });
+
+        it('should set a property (async function) #2', function() {
+            return rohr({foo: 123}).prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(val);
+                    }, 5);
+                });
+            }).set('foo', function() {
+                return new Promise(function(resolve, reject) { 
+                    setTimeout(function() {
+                        resolve('bar');
+                    }, 20);
+                });
+            }).toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
     });
 
     describe('value()', function() {
         it('should set a property (sync value)', function() {
-            return rohr({ foo: 1234 }).prop('foo').value('bar').toPromise().then(function(object) {
+            return rohr({ foo: 1234 })
+
+            .prop('foo').value('bar')
+            .optional('test').value('hello world')
+
+            .toPromise().then(function(object) {
                 object.foo.should.equal('bar');
             });
         });
@@ -425,6 +575,15 @@ describe('rohr', function() {
                 object.foo.should.equal('bar');
             });
         });
+
+        it('without selected property', function() {
+            try {
+                rohr({ foo: 1234 }).value(123);
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
+        });
     });
 
     describe('rename()', function() {
@@ -432,6 +591,7 @@ describe('rohr', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').rename('baz')
+            .optional('nonexistent').rename('test')
 
             .toPromise().then(function(object) {
                 object.baz.should.equal('bar');
@@ -505,6 +665,15 @@ describe('rohr', function() {
                     return Promise.reject();
                 }
             });
+        });
+
+        it('without selected property', function() {
+            try {
+                rohr({foo: 'bar'}).rename('test');
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
         });
     });
 
@@ -661,6 +830,19 @@ describe('rohr', function() {
         });
     });
 
+    describe('scopeBack()', function() {
+        it('single scope', function() {
+            return rohr({foo: { bar: 'baz' }})
+
+            .prop('foo').scope().scopeBack()
+                .prop('foo').isObject()
+
+            .toPromise().then(function(object) {
+                object.foo.bar.should.equal('baz');
+            });
+        });
+    });
+
     describe('map()', function() {
         it('sync test', function() {
             return rohr({ test: [1, 2, 3, 4]})
@@ -758,6 +940,17 @@ describe('rohr', function() {
                 err[0].type.should.equal('MapOverNonArray');
             });
         });
+
+        it('without selected property', function() {
+            try {
+                rohr({ test: 2 }).map(function(value) {
+                    return value;
+                });
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
+        });
     });
 
     describe('broadcast()', function() {
@@ -765,9 +958,27 @@ describe('rohr', function() {
             return rohr({ foo: 1234 })
 
             .prop('foo').broadcast('bar')
+            .optional('nonexistent').broadcast('test')
 
             .toPromise().then(function(object) {
                 object.bar.should.equal(1234);
+            });
+        });
+
+        it('should broadcast a value to a single field #2', function() {
+            return rohr({ foo: 1234 })
+
+            .prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(val * 2);
+                    }, 15);
+                })
+            }).broadcast('bar')
+            .optional('nonexistent').broadcast('test')
+
+            .toPromise().then(function(object) {
+                object.bar.should.equal(2468);
             });
         });
 
@@ -799,10 +1010,29 @@ describe('rohr', function() {
             return rohr({ index: 1})
 
             .prop('index').lookup(data, 'id')
+            .optional('nonexistent').lookup([], 'test')
 
             .toPromise().then(function(object) {
                 object.index.id.should.equal(1);
                 object.index.test.should.equal('bar');
+            });
+        });
+
+        it('should lookup the property value in an array #2', function() {
+            var data = [{id: 0, test: 'foo'}, {id: 1, test: 'bar'}, {id: 2, test: 'baz'}];
+            return rohr({ index: 0})
+
+            .prop('index').transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(2);
+                    }, 10)
+                });
+            }).lookup(data, 'id')
+
+            .toPromise().then(function(object) {
+                object.index.id.should.equal(2);
+                object.index.test.should.equal('baz');
             });
         });
 
@@ -843,6 +1073,15 @@ describe('rohr', function() {
                 err.length.should.equal(1);
                 err[0].type.should.equal('LookupFailed');
             });
+        });
+
+        it('without selected property', function() {
+            try {
+                rohr({ index: 'somethingElse' }).lookup([]);
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
         });
     });
 

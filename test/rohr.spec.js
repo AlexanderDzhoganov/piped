@@ -1487,7 +1487,7 @@ describe('rohr', function() {
             .rootScope()
 
             .toPromise().then(function(object) {
-                object.some.deep.hierarchy.stuff.hello.world.bar.should.equal('abc');
+                object.foo.some.deep.hierarchy.stuff.hello.world.bar.should.equal('abc');
             });
         });
 

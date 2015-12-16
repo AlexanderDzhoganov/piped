@@ -1,5 +1,5 @@
 var should = require('should');
-var rohr = require('./../lib/rohr');
+var rohr = require('./../index');
 
 describe('rohr', function() {
     describe('constructor', function() {
@@ -88,6 +88,7 @@ describe('rohr', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').isString()
+            .optional('hello').isString()
 
             .toPromise();
         });
@@ -103,6 +104,15 @@ describe('rohr', function() {
                 return Promise.resolve();
             });
         });
+
+        it('without selected property', function() {
+            try {
+                rohr({foo: 1234}).isString()
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
     });
 
     describe('isNumber()', function() {
@@ -110,6 +120,7 @@ describe('rohr', function() {
             return rohr({foo: 4})
 
             .prop('foo').isNumber()
+            .optional('hello').isNumber()
 
             .toPromise();
         });
@@ -124,6 +135,15 @@ describe('rohr', function() {
             }).catch(function() {
                 return Promise.resolve();
             });
+        });
+
+        it('without selected property', function() {
+            try {
+                rohr({foo: 1234}).isNumber()
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
         });
     });
 
@@ -132,6 +152,7 @@ describe('rohr', function() {
             return rohr({foo: {}})
 
             .prop('foo').isObject()
+            .optional('hello').isObject()
 
             .toPromise();
         });
@@ -147,6 +168,15 @@ describe('rohr', function() {
                 return Promise.resolve();
             });
         });
+
+        it('without selected property', function() {
+            try {
+                rohr({foo: 1234}).isObject()
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
     });
 
     describe('isDate()', function() {
@@ -154,6 +184,7 @@ describe('rohr', function() {
             return rohr({foo: new Date(Date.now())})
 
             .prop('foo').isDate()
+            .optional('hello').isDate()
 
             .toPromise();
         });
@@ -169,6 +200,47 @@ describe('rohr', function() {
                 return Promise.resolve();
             });
         });
+
+        it('without selected property', function() {
+            try {
+                rohr({foo: 1234}).isDate()
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
+    });
+
+    describe('isArray()', function() {
+        it('test 1 (passing)', function() {
+            return rohr({foo: [1, 2]})
+
+            .prop('foo').isArray()
+            .optional('hello').isArray()
+
+            .toPromise();
+        });
+
+        it('test 2 (failing)', function() {
+            return rohr({foo: 'bar'})
+
+            .prop('foo').isArray()
+
+            .toPromise().then(function() {
+                return Promise.reject();
+            }).catch(function() {
+                return Promise.resolve();
+            });
+        });
+
+        it('without selected property', function() {
+            try {
+                rohr({foo: 1234}).isArray()
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
     });
 
     describe('castTo()', function() {
@@ -176,6 +248,22 @@ describe('rohr', function() {
             return rohr({foo: 42})
 
             .prop('foo').isNumber().castTo('string').isString()
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal('42');
+            });
+        });
+
+        it('string #2', function() {
+            return rohr({foo: 42})
+
+            .prop('foo').isNumber().transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(val);
+                    }, 15);
+                });
+            }).castTo('string').isString()
 
             .toPromise().then(function(object) {
                 object.foo.should.equal('42');
@@ -225,6 +313,24 @@ describe('rohr', function() {
                 return Promise.resolve();
             }
         });
+
+        it('without selected property', function() {
+            try {
+                return rohr({foo: 0}).castTo('blabla');
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
+
+        it('with undefined property', function() {
+            try {
+                return rohr({foo: 0}).prop('test').castTo('blabla');
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
     });
 
     describe('nuke()', function() {
@@ -232,12 +338,22 @@ describe('rohr', function() {
             return rohr({foo: 'bar'})
 
             .prop('foo').nuke()
+            .optional('bar').nuke()
 
             .toPromise().then(function(object) {
                 if(object.foo) {
                     return Promise.reject();
                 }
             });
+        });
+
+        it('should fail when not property is selected', function() {
+            try {
+                rohr({foo: 'bar'}).nuke();
+                should.fail();
+            } catch(err) {
+                return Promise.resolve();
+            }
         });
     });
 
@@ -291,6 +407,20 @@ describe('rohr', function() {
                         resolve('bar');
                     }, 20);
                 });
+            }).toPromise().then(function(object) {
+                object.foo.should.equal('bar');
+            });
+        });
+
+        it('should set a property (async function) #2', function() {
+            return rohr({ foo: 1234 }).prop('foo').transform(function(val) {
+                return new Promise(function(resolve, reject) { 
+                    setTimeout(function() {
+                        resolve('bar');
+                    }, 40);
+                });
+            }).value(function() {
+                return 'bar';
             }).toPromise().then(function(object) {
                 object.foo.should.equal('bar');
             });
@@ -436,6 +566,28 @@ describe('rohr', function() {
             });
         });
 
+        it('w/ rejected promise', function() {
+            return rohr({foo: 'bar', test: 1234})
+
+            .prop('foo').isString().transform(function(val) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        reject('err');
+                    }, 25);
+                });
+            })
+
+            .toPromise().then(function(object) {
+                should.fail('promise should be rejected');
+            }, function(err) {
+                err.length.should.equal(1);
+                err[0].error.should.equal('err');
+                err[0].type.should.equal('TransformPromiseRejected');
+                err[0].scope.should.equal('foo');
+                err[0].property.should.equal('foo');
+            });
+        });
+
     });
 
     describe('scope()', function() {
@@ -474,6 +626,39 @@ describe('rohr', function() {
                 object.foo.bar.baz.should.equal(840);
             });
         });
+
+        it('scope to non-object', function() {
+            return rohr({foo: 1234})
+
+            .prop('foo').scope()
+                
+            .toPromise().then(function(object) {
+                should.fail('should not be here');
+            }, function(err) {
+                err.length.should.equal(1);
+                err[0].type.should.equal('InvalidScopeToNonObject');
+                err[0].property.should.equal('foo');
+                err[0].scope.should.equal('foo')
+            });
+        });
+
+        it('scope without selected property (fails)', function() {
+            try {
+                rohr({foo: 1234}).scope();
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
+
+        it('scope with undefined property (fails)', function() {
+            try {
+                rohr({foo: 1234}).prop('test').scope();
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
     });
 
     describe('map()', function() {
@@ -483,6 +668,8 @@ describe('rohr', function() {
             .prop('test').isArray().map(function(value) {
                 return value * 2;
             })
+
+            .optional('doesnotexist').map(function() {})
 
             .toPromise().then(function(object) {
                 object.test.length.should.equal(4);
@@ -556,6 +743,21 @@ describe('rohr', function() {
                 object.test[3].should.equal(8);
             });
         });
+
+        it('emit error on map over non-array type', function() {
+            return rohr({ test: 2 })
+            
+            .prop('test').map(function(value) {
+                return value;
+            })
+
+            .toPromise().then(function(object) {
+                should.fail('promise should be rejected');
+            }, function(err) {
+                err.length.should.equal(1);
+                err[0].type.should.equal('MapOverNonArray');
+            });
+        });
     });
 
     describe('broadcast()', function() {
@@ -580,6 +782,15 @@ describe('rohr', function() {
                 object.test.should.equal(1234);
             });
         });
+
+        it('without selected property', function() {
+            try {
+                rohr({ foo: 1234 }).broadcast(['bar', 'baz', 'test']);
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
     });
 
     describe('lookup()', function() {
@@ -603,6 +814,34 @@ describe('rohr', function() {
 
             .toPromise().then(function(object) {
                 object.index.should.equal(3);
+            });
+        });
+
+        it('should emit lookup error on failed lookup', function() {
+            var data = [{id: 0, test: 'foo'}, {id: 1, test: 'bar'}, {id: 2, test: 'baz'}];
+            return rohr({ index: 42 })
+
+            .prop('index').lookup(data)
+
+            .toPromise().then(function(object) {
+                should.fail('promise should be rejected');
+            }, function(err) {
+                err.length.should.equal(1);
+                err[0].type.should.equal('LookupFailed');
+            });
+        });
+
+        it('should emit lookup error on failed lookup #2', function() {
+            var data = { foo: 1, bar: 2, baz: 3}
+            return rohr({ index: 'somethingElse' })
+
+            .prop('index').lookup(data)
+
+            .toPromise().then(function(object) {
+                should.fail('promise should be rejected');
+            }, function(err) {
+                err.length.should.equal(1);
+                err[0].type.should.equal('LookupFailed');
             });
         });
     });

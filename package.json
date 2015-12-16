@@ -4,7 +4,7 @@
   "description": "Validation and data transformation library",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/jslint/bin/jslint.js lib/*.js --node --nomen && ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec"
+    "test": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec && node_modules/jslint/bin/jslint.js lib/*.js --node --nomen"
   },
   "repository": {
     "type": "git",

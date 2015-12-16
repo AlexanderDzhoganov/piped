@@ -68,6 +68,7 @@ TransformPromiseRejected | A promise returned a `.transform()` call was rejected
 InvalidPropertyType      | A type check (e.g. `isString()`, `isNumber()`) failed. Error data: `property`, `expectedType`, `actualType`, `scope`
 LookupFailed             | A `lookup()` call failed to find a match for the selected property. Error data: `property`, `key`, `scope`
 MapOverNonArray          | When calling `.map()` on a non-array type.
+ValidationError          | When `validate()` fails by either the callback returning `false` or a rejected promise. In the case of a promise the rejection error will be in the `err` property of the error object.
 
 ## API
 
@@ -93,6 +94,7 @@ map(fn)                         | Maps every object of the currently selected `a
 rename(propertyName)            | Renames the currently selected property.
 rescope(propertyPath)           | Moves the currently selected property to a new scope. The path starts from the root of the object and accepts dots `.` (e.g. `foo.bar`). Any non-existing properties are created automatically, existing properties are overwritten.
 broadcast([propertyName/array]) | Broadcasts the value of the currently selected property to one or more other properties. Single argument is either a string or an array of strings.
+validate(fn)                    | Validates the value of the currently selected property using `fn` which is a `function (value) {}` which returns a boolean or a promise. A resolved promise means the validation is successful and no further action is taken, a rejected promise will result in a `ValidationError`, the rejection error can be found in the `err` property of the error object.
 toPromise(ignoreErrors)         | Returns a promise that resolves to the transformed object, or is rejected with a list of errors
 resolve()                       |
 object()                        |

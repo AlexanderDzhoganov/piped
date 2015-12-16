@@ -1,5 +1,4 @@
 var should = require('should');
-
 var rohr = require('./../lib/rohr');
 
 describe('rohr', function() {
@@ -16,9 +15,7 @@ describe('rohr', function() {
                 object.foo.should.equal('bar');
             }).resolve();
         });
-    });
 
-    describe('object()', function() {
         it('should return the validation errors', function() {
             return rohr({foo: 'bar'})
 
@@ -65,6 +62,24 @@ describe('rohr', function() {
             return rohr({foo: 'bar'})
                 .optional('notFound')
             .toPromise();
+        });
+
+        it('test 3 (passing)', function() {
+            return rohr({foo: 'bar', i: 1}).prop('i').transform(function(value) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(function() {
+                        resolve(value + 11);
+                    }, 10);
+                });
+            })
+            .optional('foo').transform(function(value) {
+                return 'test';
+            })
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal('test');
+                object.i.should.equal(12);
+            });
         });
     });
 
@@ -153,6 +168,62 @@ describe('rohr', function() {
             }).catch(function() {
                 return Promise.resolve();
             });
+        });
+    });
+
+    describe('castTo()', function() {
+        it('string', function() {
+            return rohr({foo: 42})
+
+            .prop('foo').isNumber().castTo('string').isString()
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal('42');
+            });
+        });
+
+        it('integer', function() {
+            return rohr({foo: '42.5'})
+
+            .prop('foo').isString().castTo('integer').isNumber()
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal(42);
+            });
+        });
+
+        it('float', function() {
+            return rohr({foo: '42.5'})
+
+            .prop('foo').isString().castTo('float').isNumber()
+
+            .toPromise().then(function(object) {
+                object.foo.should.equal(42.5);
+            });
+        });
+
+        it('date', function() {
+            return rohr({foo: 0})
+
+            .prop('foo').isNumber().castTo('date').isDate()
+
+            .toPromise().then(function(object) {
+                object.foo.toString().should.equal(new Date(0).toString());
+            });
+        });
+
+        it('invalid type', function() {
+            try {
+                return rohr({foo: 0})
+
+                .prop('foo').isNumber().castTo('blabla').isDate()
+
+                .toPromise().then(function(object) {
+                    should.fail('invalid type given to castTo()');
+                });
+            } catch (err) {
+                return Promise.resolve();
+            }
         });
     });
 
@@ -507,6 +578,44 @@ describe('rohr', function() {
                 object.bar.should.equal(1234);
                 object.baz.should.equal(1234);
                 object.test.should.equal(1234);
+            });
+        });
+    });
+
+    describe('lookup()', function() {
+        it('should lookup the property value in an array', function() {
+            var data = [{id: 0, test: 'foo'}, {id: 1, test: 'bar'}, {id: 2, test: 'baz'}];
+            return rohr({ index: 1})
+
+            .prop('index').lookup(data, 'id')
+
+            .toPromise().then(function(object) {
+                object.index.id.should.equal(1);
+                object.index.test.should.equal('bar');
+            });
+        });
+
+        it('should lookup the property value in an object', function() {
+            var data = { foo: 1, bar: 2, baz: 3}
+            return rohr({ index: 'baz' })
+
+            .prop('index').lookup(data)
+
+            .toPromise().then(function(object) {
+                object.index.should.equal(3);
+            });
+        });
+    });
+
+    describe('rescope()', function() {
+        xit('test #1', function() { // skipped because of bug in rescope(), have to rethink approach
+            return rohr({ foo: '1234' })
+
+            .prop('foo').rescope('bar.baz.test')
+
+            .toPromise().then(function(object) {
+                console.log('OBJ: ' + JSON.stringify(object, null, 4));
+                object.bar.baz.test.should.equal('1234');
             });
         });
     });

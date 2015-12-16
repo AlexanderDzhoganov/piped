@@ -769,6 +769,7 @@ describe('rohr', function() {
                     return value;
                 })
             .scopeBack()
+            .scopeBack()
 
             .toPromise().then(function(object) {
                 object.foo.bar.should.equal('baz');
@@ -1078,6 +1079,15 @@ describe('rohr', function() {
         it('without selected property', function() {
             try {
                 rohr({ index: 'somethingElse' }).lookup([]);
+                should.fail();
+            } catch (err) {
+                return Promise.resolve();
+            }
+        });
+
+        it('with invalid object type', function() {
+            try {
+                rohr({ index: 'somethingElse' }).lookup('abc');
                 should.fail();
             } catch (err) {
                 return Promise.resolve();

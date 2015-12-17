@@ -1748,4 +1748,33 @@ describe('rohr', function() {
         });
 
     });
+
+    describe('Error behaviors', function() {
+        it('test #1', function () {
+            return rohr({ foo: { bar: 1234, baz: 2348} })
+
+            .prop('foo').scope()
+                .prop('bar').transform(function() {
+                    return new Promise(function(resolve, reject) {
+                        setTimeout(function() {
+                            reject('err1');
+                        }, 15);
+                    });
+                })
+                .prop('baz').transform(function() {
+                    return new Promise(function(resolve, reject) {
+                        setTimeout(function() {
+                            reject('err2');
+                        }, 25);
+                    });
+                })
+            .rootScope()
+
+            .toPromise().then(function() {
+                return Promise.reject();
+            }, function (err) {
+                err.length.should.equal(2);
+            });
+        });
+    });
 });

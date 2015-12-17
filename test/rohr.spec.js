@@ -1750,7 +1750,7 @@ describe('rohr', function() {
     });
 
     describe('Error behaviors', function() {
-        it('test #1', function () {
+        it('test #1 (rejected promises)', function () {
             return rohr({ foo: { bar: 1234, baz: 2348} })
 
             .prop('foo').scope()
@@ -1774,6 +1774,28 @@ describe('rohr', function() {
                 return Promise.reject();
             }, function (err) {
                 err.length.should.equal(2);
+                err[0].type.should.equal('TransformPromiseRejected');
+                err[0].property.should.equal('bar');
+                err[0].error.should.equal('err1');
+                err[0].scope.should.equal('foo');
+                err[1].type.should.equal('TransformPromiseRejected');
+                err[1].property.should.equal('baz');
+                err[1].error.should.equal('err2');
+                err[1].scope.should.equal('foo');
+            });
+        });
+
+        it('test #2 (invalid scope)', function () {
+            return rohr({})
+
+            .prop('foo').scope()
+                .prop('bar')
+            .rootScope()
+
+            .toPromise().then(function() {
+                should.fail('promise should be rejected');
+            }, function (err) {
+                err.length.should.equal(1);
             });
         });
     });

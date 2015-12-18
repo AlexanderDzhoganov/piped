@@ -686,6 +686,18 @@ describe('rohr', function() {
             });
         });
 
+        it('bug fix', function() {
+            return rohr({})
+
+            .optional('foo')
+            .set('test', {bar: 42}).scope()
+                .prop('bar').value(10)
+            .rootScope()
+            .toPromise().then(function(object) {
+                object.test.bar.should.equal(10);
+            });
+        })
+
         it('should do nothing while matchStatus === false', function() {
             return rohr({foo: 'bar', 'test': 'hello world'})
             .prop('foo').ifEquals('42')

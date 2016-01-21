@@ -24,7 +24,7 @@
     "should": "^8.0.1"
   },
   "dependencies": {
-    "lodash": "^3.10.1"
+    "lodash": "^4.0.0"
   },
   "tonicExampleFilename": "example.js",
   "keywords": [

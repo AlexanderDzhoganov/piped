@@ -1653,6 +1653,19 @@ describe('rohr', function() {
             });
         });
 
+        it('with value (passing) #2', function() {
+            return rohr({ foo: { test: 1234, bla: 'foo' } })
+            .prop('foo').scope()
+                .prop('test').ifEquals(1234).prop('bla').castTo('string').rename('BLA').set('blabla', '').endIf()
+                .prop('test').ifEquals(2468).prop('bla').castTo('string').rename('BLA').set('blabla', '').endIf()
+            .scopeBack().rename('FOO')
+
+            .toPromise().then(function (object) {
+                object.FOO.test.should.equal(1234);
+                object.FOO.BLA.should.equal('foo');
+            });
+        });
+
         it('with value (failing)', function() {
             return rohr({ foo: 'bar' })
 
